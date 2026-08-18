@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "name": "hwcfgmap",
+  "github": "https://github.com/SuperMarioYL/hwcfgmap",
+  "host": "hwcfgmap.lei6393.com",
+  "lang": { "primary": "zh", "toggle": true },
+  "accent": ["#14b8a6", "#0d9488", "#99f6e4"],
+  "hero": {
+    "eyebrow": { "zh": "本地 · 单二进制 · 信创就绪", "en": "Local · Single binary · 信创-ready" },
+    "headline": {
+      "zh": "一条命令探完盒子\n直接拿到可粘贴的启动行",
+      "en": "Probe the box in one command\nGet a ready-to-paste launch line"
+    },
+    "sub": {
+      "zh": "不再逐卡逐模型手调参数。探测显卡、内存、磁盘，按本机硬件合成最优本地大模型启动配置。",
+      "en": "Stop hand-tuning per card, per model. Probe your GPU, RAM and disk, then synthesize the optimal launch config for on-device LLMs."
+    },
+    "command": "hwcfgmap probe --model qwen3-27b",
+    "cta": { "zh": "看它怎么探", "en": "See it probe" },
+    "ctaGithub": { "zh": "GitHub 仓库", "en": "GitHub repo" },
+    "scroll": { "zh": "往下看", "en": "Scroll" }
+  },
+  "advantages": [
+    {
+      "title": { "zh": "告别试错矩阵", "en": "End the trial-and-error matrix" },
+      "body": {
+        "zh": "每换一张卡、每换一个模型，过去都要刷文档、跑试错、手改启动行。现在一条命令探完盒子，直接合成调好的参数。",
+        "en": "Every new card or model used to mean digging through docs, running trials and hand-editing the launch line. Now one command probes the box and emits tuned arguments."
+      },
+      "chips": ["› GPU · CPU · RAM · NVMe 一次探完", "› < 10 秒出结果", "› 国产模型就绪"]
+    },
+    {
+      "title": { "zh": "国产卡也能用", "en": "Works on domestic GPUs" },
+      "body": {
+        "zh": "信创盒子上的本地推理，公开调参文档几乎为零。工具读盒子自带的显卡管理命令，把国产卡的后端识别出来，直接给可用启动行。",
+        "en": "On-prem inference on 信创 boxes has near-zero public tuning docs. The tool reads the box's own GPU management commands, maps the domestic-card backend and emits a working launch line."
+      },
+      "chips": ["› 昇腾 / 摩尔线程 vendor CLI", "› 后端自动映射", "› 数据不出境"]
+    },
+    {
+      "title": { "zh": "Agent 可直接消费", "en": "Agent-ready output" },
+      "body": {
+        "zh": "本地编程助手常常继承调参负担——拿到一条按本机调好的启动行，直接粘进终端回车就行，不用再替它试错。",
+        "en": "Local coding agents often inherit the tuning burden. Hand them a launch line already tuned for this box — paste it into the terminal and press enter."
+      },
+      "chips": ["› 只打印命令行", "› 不跑模型不连外网", "› 可粘贴即用"]
+    },
+    {
+      "title": { "zh": "单文件零依赖", "en": "One file, zero runtime deps" },
+      "body": {
+        "zh": "信创盒上可能没有完整开发环境。下载一个二进制就能跑，不引入第二个常驻进程，只在探测阶段借用盒子已有的工具。",
+        "en": "信创 boxes may lack a full dev toolchain. Download one binary and run it — no second daemon, it only borrows the tools the box already has during probe."
+      },
+      "chips": ["› 下载即用", "› 无常驻进程", "› Linux 二进制"]
+    }
+  ],
+  "scene": { "kind": "hub-nodes", "nodes": ["GPU", "CPU", "RAM", "NVMe"] },
+  "cta": {
+    "headline": { "zh": "盒子探完，启动行就在剪贴板", "en": "Box probed, launch line on your clipboard" },
+    "sub": { "zh": "一条命令，从硬件到可用启动行。", "en": "One command, from hardware to a working launch line." },
+    "button": { "zh": "装一个试试", "en": "Install and try" }
+  },
+  "footer": { "tag": { "zh": "MIT 开源 · 信创本地推理", "en": "MIT open source · on-prem 信创 inference" } }
+}
