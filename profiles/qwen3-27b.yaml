@@ -1,0 +1,30 @@
+# Canonical Qwen3-27B model target — the primary m2 happy-path model. This
+# YAML is the human-editable source of truth; the binary also carries an
+# in-code default that mirrors these values so it works standalone on a 信创
+# box with no profiles/ tree beside it. Override any field here; missing
+# fields fall back to the in-code value (see internal/modeltargets/registry.go).
+#
+# Footprints are documented-threshold estimates pending verification on real
+# weights (plan schema assumptions flagged UNVERIFIED). They drive a
+# deterministic static synthesis — not a benchmark.
+id: qwen3-27b
+name: Qwen3-27B
+family: qwen3
+parameters: 27000000000
+num_layers: 64
+quants:
+  - id: q4_k_m
+    weight_bytes: 17000000000
+  - id: q8_0
+    weight_bytes: 28600000000
+  - id: f16
+    weight_bytes: 54000000000
+default_quant: q4_k_m
+# q8_0 KV footprint, bytes per token per layer (~2 KiB for a 27B-class dense
+# model with GQA).
+kv_cache_per_token_per_layer_bytes: 2048
+kv_cache_type: q8_0
+recommended_context: 8192
+recommended_batch: 512
+mlock: true
+exec_binary: llama-server
