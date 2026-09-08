@@ -104,6 +104,10 @@
           "alt": {
             "zh": "实际读取模型注册表，并将 8 核、64 GiB RAM、无 GPU 的构造输入送进真实合成函数。输出是静态估算，不是运行验证或最优参数。",
             "en": "The run reads the model registry and sends a constructed eight-core, 64 GiB RAM, CPU-only profile through the real synthesizer. The output is a static estimate, not a tested or optimal configuration."
+          },
+          "mobile": {
+            "light": "/assets/presentation/process-mobile-light.svg",
+            "dark": "/assets/presentation/process-mobile-dark.svg"
           }
         }
       },
@@ -122,6 +126,10 @@
           "alt": {
             "zh": "probe 读取系统信息与可用的 vendor CLI；modeltargets 提供代码内默认值和 YAML 覆盖；synth.Synthesize 根据 RAM、VRAM 和物理核数生成参数，RenderLaunchLine 输出命令文本。NVMe 计数只是累计读取字节，不是带宽测量。",
             "en": "probe reads system information and available vendor CLIs. modeltargets supplies defaults and YAML overrides; synth.Synthesize derives settings from RAM, VRAM and physical cores, and RenderLaunchLine emits command text. NVMe read counters are cumulative bytes, not measured bandwidth."
+          },
+          "mobile": {
+            "light": "/assets/presentation/architecture-mobile-light.svg",
+            "dark": "/assets/presentation/architecture-mobile-dark.svg"
           }
         }
       },
@@ -140,6 +148,10 @@
           "alt": {
             "zh": "模型目标包括 qwen3-27b、glm-4、deepseek-v3 和 kimi-k2 的内置规则。请按实际权重与推理服务版本核对 YAML，再在目标硬件上测试启动与吞吐。",
             "en": "Built-in target rules include qwen3-27b, glm-4, deepseek-v3 and kimi-k2. Check the YAML against the actual weights and runtime version, then validate startup and throughput on the target hardware."
+          },
+          "mobile": {
+            "light": "/assets/presentation/integrations-mobile-light.svg",
+            "dark": "/assets/presentation/integrations-mobile-dark.svg"
           }
         }
       }
