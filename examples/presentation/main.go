@@ -1,0 +1,3 @@
+package main
+import("encoding/json";"fmt";"github.com/SuperMarioYL/hwcfgmap/internal/modeltargets";"github.com/SuperMarioYL/hwcfgmap/internal/profile";"github.com/SuperMarioYL/hwcfgmap/internal/synth")
+func main(){box:=profile.BoxProfile{GPU:[]profile.GPUCard{},CPU:profile.CPUInfo{PhysicalCores:8,Threads:16,Model:"fixture CPU"},RAM:64*1024*1024*1024};registry:=modeltargets.New();target,ok:=registry.Get("qwen3-27b");if !ok{panic("missing target")};args:=synth.Synthesize(box,target);result:=struct{Input profile.BoxProfile `json:"input"`;Arguments synth.ArgMatrix `json:"arguments"`;Launch string `json:"launch"`}{box,args,synth.RenderLaunchLine(args,target,"./example.gguf")};data,err:=json.MarshalIndent(result,"","  ");if err!=nil{panic(err)};fmt.Println(string(data))}

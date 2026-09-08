@@ -1,0 +1,26 @@
+{
+  "version": "0.1.0",
+  "scope": "Offline model-registry inspection and static synthesis from an explicit CPU-only fixture. No physical hardware probe, model download or llama-server execution.",
+  "inputs": [
+    {
+      "path": "examples/presentation/main.go",
+      "sha256": "ff028e7825f6088ef3116963e5b78f14c0752082f2c81134160be221c031032c"
+    },
+    {
+      "path": "profiles/qwen3-27b.yaml",
+      "sha256": "69c600ffd2d8b9b259f08f5f68fe3af296fc4ac532ed18de1e6d550920ca1f6f"
+    }
+  ],
+  "steps": [
+    {
+      "command": "go run ./cmd/hwcfgmap models",
+      "output": "qwen3-27b       Qwen3-27B               q=q4_k_m  ctx=8192  layers=64\ndeepseek-v3     DeepSeek-V3             q=q4_k_m  ctx=4096  layers=61\nglm-4           GLM-4 (9B Chat)         q=q4_k_m  ctx=8192  layers=40\nkimi-k2         Kimi-K2                 q=q4_k_m  ctx=4096  layers=61\n",
+      "exit_code": 0
+    },
+    {
+      "command": "go run ./examples/presentation",
+      "output": "{\n  \"input\": {\n    \"gpu\": [],\n    \"cpu\": {\n      \"physical_cores\": 8,\n      \"threads\": 16,\n      \"numa_nodes\": 0,\n      \"model\": \"fixture CPU\"\n    },\n    \"ram_bytes\": 68719476736\n  },\n  \"arguments\": {\n    \"n_gpu_layers\": 0,\n    \"context_size\": 8192,\n    \"batch_size\": 512,\n    \"threads\": 8,\n    \"kv_cache_type\": \"q8_0\",\n    \"mlock\": true,\n    \"offload_layer\": 0,\n    \"quant\": \"q4_k_m\",\n    \"exec_binary\": \"llama-server\",\n    \"fit_note\": \"CPU-only — no GPU detected; context capped by 0.8×RAM, weights run from RAM\"\n  },\n  \"launch\": \"llama-server --model ./example.gguf --n-gpu-layers 0 -c 8192 -b 512 -t 8 --cache-type-k q8_0 --mlock\"\n}\n",
+      "exit_code": 0
+    }
+  ]
+}

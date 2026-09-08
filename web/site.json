@@ -1,64 +1,244 @@
 {
-  "schema": 1,
+  "schema": 3,
   "name": "hwcfgmap",
   "github": "https://github.com/SuperMarioYL/hwcfgmap",
   "host": "hwcfgmap.lei6393.com",
-  "lang": { "primary": "zh", "toggle": true },
-  "accent": ["#14b8a6", "#0d9488", "#99f6e4"],
+  "palette": "auto",
+  "lang": {
+    "primary": "zh",
+    "toggle": true
+  },
+  "meta": {
+    "visual_profile": "neon-particle",
+    "content_version": "0.1.0",
+    "demo_source": "docs/demo-results.json"
+  },
   "hero": {
-    "eyebrow": { "zh": "本地 · 单二进制 · 信创就绪", "en": "Local · Single binary · 信创-ready" },
+    "eyebrow": {
+      "zh": "将硬件画像与模型目标规则合成 llama-server 参数，给部署提供可检查的起点。",
+      "en": "Combine a hardware profile with model-target rules to produce inspectable starting arguments for llama-server."
+    },
     "headline": {
-      "zh": "一条命令探完盒子\n直接拿到可粘贴的启动行",
-      "en": "Probe the box in one command\nGet a ready-to-paste launch line"
+      "zh": "先读硬件画像，\n再看启动参数",
+      "en": "Read the hardware profile.\nInspect the launch settings."
     },
     "sub": {
-      "zh": "不再逐卡逐模型手调参数。探测显卡、内存、磁盘，按本机硬件合成最优本地大模型启动配置。",
-      "en": "Stop hand-tuning per card, per model. Probe your GPU, RAM and disk, then synthesize the optimal launch config for on-device LLMs."
+      "zh": "将硬件画像与模型目标规则合成 llama-server 参数，给部署提供可检查的起点。",
+      "en": "Combine a hardware profile with model-target rules to produce inspectable starting arguments for llama-server."
     },
-    "command": "hwcfgmap probe --model qwen3-27b",
-    "cta": { "zh": "看它怎么探", "en": "See it probe" },
-    "ctaGithub": { "zh": "GitHub 仓库", "en": "GitHub repo" },
-    "scroll": { "zh": "往下看", "en": "Scroll" }
+    "href": "#quickstart",
+    "cta": {
+      "zh": "运行示例",
+      "en": "Run the example"
+    },
+    "ctaGithub": {
+      "zh": "查看源码",
+      "en": "View source"
+    }
+  },
+  "scene": {
+    "kind": "neon-graph",
+    "caption": {
+      "zh": "硬件画像 · 静态合成",
+      "en": "HARDWARE PROFILE · STATIC SYNTHESIS"
+    },
+    "fallback": "/assets/presentation/scene-dark.svg",
+    "fallbackLight": "/assets/presentation/scene-light.svg"
   },
   "advantages": [
     {
-      "title": { "zh": "告别试错矩阵", "en": "End the trial-and-error matrix" },
-      "body": {
-        "zh": "每换一张卡、每换一个模型，过去都要刷文档、跑试错、手改启动行。现在一条命令探完盒子，直接合成调好的参数。",
-        "en": "Every new card or model used to mean digging through docs, running trials and hand-editing the launch line. Now one command probes the box and emits tuned arguments."
+      "title": {
+        "zh": "分开画像与规则",
+        "en": "Separate profiles and rules"
       },
-      "chips": ["› GPU · CPU · RAM · NVMe 一次探完", "› < 10 秒出结果", "› 国产模型就绪"]
+      "body": {
+        "zh": "硬件事实与模型预算在不同数据模型中。",
+        "en": "Hardware data and model budgets have distinct models."
+      }
     },
     {
-      "title": { "zh": "国产卡也能用", "en": "Works on domestic GPUs" },
-      "body": {
-        "zh": "信创盒子上的本地推理，公开调参文档几乎为零。工具读盒子自带的显卡管理命令，把国产卡的后端识别出来，直接给可用启动行。",
-        "en": "On-prem inference on 信创 boxes has near-zero public tuning docs. The tool reads the box's own GPU management commands, maps the domestic-card backend and emits a working launch line."
+      "title": {
+        "zh": "参数可检查",
+        "en": "Inspect generated settings"
       },
-      "chips": ["› 昇腾 / 摩尔线程 vendor CLI", "› 后端自动映射", "› 数据不出境"]
+      "body": {
+        "zh": "ArgMatrix 暴露 offload、context、线程与 KV 类型。",
+        "en": "ArgMatrix exposes offload, context, threads and KV type."
+      }
     },
     {
-      "title": { "zh": "Agent 可直接消费", "en": "Agent-ready output" },
-      "body": {
-        "zh": "本地编程助手常常继承调参负担——拿到一条按本机调好的启动行，直接粘进终端回车就行，不用再替它试错。",
-        "en": "Local coding agents often inherit the tuning burden. Hand them a launch line already tuned for this box — paste it into the terminal and press enter."
+      "title": {
+        "zh": "保持人工执行边界",
+        "en": "Keep execution explicit"
       },
-      "chips": ["› 只打印命令行", "› 不跑模型不连外网", "› 可粘贴即用"]
-    },
-    {
-      "title": { "zh": "单文件零依赖", "en": "One file, zero runtime deps" },
       "body": {
-        "zh": "信创盒上可能没有完整开发环境。下载一个二进制就能跑，不引入第二个常驻进程，只在探测阶段借用盒子已有的工具。",
-        "en": "信创 boxes may lack a full dev toolchain. Download one binary and run it — no second daemon, it only borrows the tools the box already has during probe."
-      },
-      "chips": ["› 下载即用", "› 无常驻进程", "› Linux 二进制"]
+        "zh": "工具只输出启动行，不执行 llama-server。",
+        "en": "The tool prints the launch line and never runs llama-server."
+      }
     }
   ],
-  "scene": { "kind": "hub-nodes", "nodes": ["GPU", "CPU", "RAM", "NVMe"] },
-  "cta": {
-    "headline": { "zh": "盒子探完，启动行就在剪贴板", "en": "Box probed, launch line on your clipboard" },
-    "sub": { "zh": "一条命令，从硬件到可用启动行。", "en": "One command, from hardware to a working launch line." },
-    "button": { "zh": "装一个试试", "en": "Install and try" }
+  "story": {
+    "intro": {
+      "title": {
+        "zh": "让参数选择的依据可见",
+        "en": "Make configuration assumptions visible"
+      },
+      "body": {
+        "zh": "不同模型与内存预算需要不同 offload、context 和线程设置。hwcfgmap 将探测结果整理成 BoxProfile，再用明确的模型权重与 KV 预算规则生成 ArgMatrix。它输出参数供操作者核对，不替你运行推理或做吞吐调优。",
+        "en": "Models and memory budgets call for different offload, context and thread settings. hwcfgmap collects a BoxProfile and applies explicit weight and KV-budget rules to create an ArgMatrix. It prints settings for review without running inference or tuning throughput."
+      }
+    },
+    "sections": [
+      {
+        "title": {
+          "zh": "从输入到结果",
+          "en": "From input to result"
+        },
+        "body": {
+          "zh": "实际读取模型注册表，并将 8 核、64 GiB RAM、无 GPU 的构造输入送进真实合成函数。输出是静态估算，不是运行验证或最优参数。",
+          "en": "The run reads the model registry and sends a constructed eight-core, 64 GiB RAM, CPU-only profile through the real synthesizer. The output is a static estimate, not a tested or optimal configuration."
+        },
+        "image": {
+          "light": "/assets/presentation/process-light.svg",
+          "dark": "/assets/presentation/process-dark.svg",
+          "alt": {
+            "zh": "实际读取模型注册表，并将 8 核、64 GiB RAM、无 GPU 的构造输入送进真实合成函数。输出是静态估算，不是运行验证或最优参数。",
+            "en": "The run reads the model registry and sends a constructed eight-core, 64 GiB RAM, CPU-only profile through the real synthesizer. The output is a static estimate, not a tested or optimal configuration."
+          }
+        }
+      },
+      {
+        "title": {
+          "zh": "工作原理",
+          "en": "How it works"
+        },
+        "body": {
+          "zh": "probe 读取系统信息与可用的 vendor CLI；modeltargets 提供代码内默认值和 YAML 覆盖；synth.Synthesize 根据 RAM、VRAM 和物理核数生成参数，RenderLaunchLine 输出命令文本。NVMe 计数只是累计读取字节，不是带宽测量。",
+          "en": "probe reads system information and available vendor CLIs. modeltargets supplies defaults and YAML overrides; synth.Synthesize derives settings from RAM, VRAM and physical cores, and RenderLaunchLine emits command text. NVMe read counters are cumulative bytes, not measured bandwidth."
+        },
+        "image": {
+          "light": "/assets/presentation/architecture-light.svg",
+          "dark": "/assets/presentation/architecture-dark.svg",
+          "alt": {
+            "zh": "probe 读取系统信息与可用的 vendor CLI；modeltargets 提供代码内默认值和 YAML 覆盖；synth.Synthesize 根据 RAM、VRAM 和物理核数生成参数，RenderLaunchLine 输出命令文本。NVMe 计数只是累计读取字节，不是带宽测量。",
+            "en": "probe reads system information and available vendor CLIs. modeltargets supplies defaults and YAML overrides; synth.Synthesize derives settings from RAM, VRAM and physical cores, and RenderLaunchLine emits command text. NVMe read counters are cumulative bytes, not measured bandwidth."
+          }
+        }
+      },
+      {
+        "title": {
+          "zh": "能力与接入",
+          "en": "Capabilities and integration"
+        },
+        "body": {
+          "zh": "模型目标包括 qwen3-27b、glm-4、deepseek-v3 和 kimi-k2 的内置规则。请按实际权重与推理服务版本核对 YAML，再在目标硬件上测试启动与吞吐。",
+          "en": "Built-in target rules include qwen3-27b, glm-4, deepseek-v3 and kimi-k2. Check the YAML against the actual weights and runtime version, then validate startup and throughput on the target hardware."
+        },
+        "image": {
+          "light": "/assets/presentation/integrations-light.svg",
+          "dark": "/assets/presentation/integrations-dark.svg",
+          "alt": {
+            "zh": "模型目标包括 qwen3-27b、glm-4、deepseek-v3 和 kimi-k2 的内置规则。请按实际权重与推理服务版本核对 YAML，再在目标硬件上测试启动与吞吐。",
+            "en": "Built-in target rules include qwen3-27b, glm-4, deepseek-v3 and kimi-k2. Check the YAML against the actual weights and runtime version, then validate startup and throughput on the target hardware."
+          }
+        }
+      }
+    ],
+    "details": [
+      {
+        "title": {
+          "zh": "输出是起点",
+          "en": "A starting point"
+        },
+        "body": {
+          "zh": "没有 token 运行或自动调优，仍需实际部署测试。",
+          "en": "No tokens or autotuning are run; deployment testing remains necessary."
+        }
+      }
+    ]
   },
-  "footer": { "tag": { "zh": "MIT 开源 · 信创本地推理", "en": "MIT open source · on-prem 信创 inference" } }
+  "demo": {
+    "title": {
+      "zh": "实际运行结果",
+      "en": "Actual demo output"
+    },
+    "note": {
+      "zh": "实际读取模型注册表，并将 8 核、64 GiB RAM、无 GPU 的构造输入送进真实合成函数。输出是静态估算，不是运行验证或最优参数。",
+      "en": "The run reads the model registry and sends a constructed eight-core, 64 GiB RAM, CPU-only profile through the real synthesizer. The output is a static estimate, not a tested or optimal configuration."
+    },
+    "source": "https://github.com/SuperMarioYL/hwcfgmap/blob/main/docs/demo-results.json",
+    "steps": [
+      {
+        "label": {
+          "zh": "读取模型规则",
+          "en": "Read model rules"
+        },
+        "body": {
+          "zh": "列出本地注册表及默认 context 和 quant。",
+          "en": "List the local targets with default context and quant."
+        },
+        "command": "go run ./cmd/hwcfgmap models",
+        "output": "qwen3-27b       Qwen3-27B               q=q4_k_m  ctx=8192  layers=64\ndeepseek-v3     DeepSeek-V3             q=q4_k_m  ctx=4096  layers=61\nglm-4           GLM-4 (9B Chat)         q=q4_k_m  ctx=8192  layers=40\nkimi-k2         Kimi-K2                 q=q4_k_m  ctx=4096  layers=61\n",
+        "image": "/assets/presentation/demo-0-light.svg",
+        "imageDark": "/assets/presentation/demo-0-dark.svg"
+      },
+      {
+        "label": {
+          "zh": "合成 fixture 参数",
+          "en": "Synthesize fixture settings"
+        },
+        "body": {
+          "zh": "从完整 CPU-only 输入生成参数与未执行的启动行。",
+          "en": "Generate arguments and an unexecuted launch line from the complete CPU-only input."
+        },
+        "command": "go run ./examples/presentation",
+        "output": "{\n  \"input\": {\n    \"gpu\": [],\n    \"cpu\": {\n      \"physical_cores\": 8,\n      \"threads\": 16,\n      \"numa_nodes\": 0,\n      \"model\": \"fixture CPU\"\n    },\n    \"ram_bytes\": 68719476736\n  },\n  \"arguments\": {\n    \"n_gpu_layers\": 0,\n    \"context_size\": 8192,\n    \"batch_size\": 512,\n    \"threads\": 8,\n    \"kv_cache_type\": \"q8_0\",\n    \"mlock\": true,\n    \"offload_layer\": 0,\n    \"quant\": \"q4_k_m\",\n    \"exec_binary\": \"llama-server\",\n    \"fit_note\": \"CPU-only — no GPU detected; context capped by 0.8×RAM, weights run from RAM\"\n  },\n  \"launch\": \"llama-server --model ./example.gguf --n-gpu-layers 0 -c 8192 -b 512 -t 8 --cache-type-k q8_0 --mlock\"\n}\n",
+        "image": "/assets/presentation/demo-1-light.svg",
+        "imageDark": "/assets/presentation/demo-1-dark.svg"
+      }
+    ]
+  },
+  "quickstart": {
+    "title": {
+      "zh": "从完整输入开始",
+      "en": "Start with complete input"
+    },
+    "body": {
+      "zh": "需要 Go 1.24+。示例的硬件数据是显式 fixture，不探测本机，也不需要模型文件。",
+      "en": "Requires Go 1.24+. The demo supplies an explicit hardware fixture, without probing this machine or reading model weights."
+    },
+    "steps": [
+      {
+        "title": {
+          "zh": "安装",
+          "en": "Install"
+        },
+        "code": "git clone https://github.com/SuperMarioYL/hwcfgmap.git\ncd hwcfgmap\ngo build -o hwcfgmap ./cmd/hwcfgmap"
+      },
+      {
+        "title": {
+          "zh": "运行自带示例",
+          "en": "Run the supplied example"
+        },
+        "code": "go run ./cmd/hwcfgmap models\ngo run ./examples/presentation"
+      }
+    ]
+  },
+  "limitations": [
+    {
+      "zh": "参数由静态模型推导，不是实测最优解或部署成功保证。",
+      "en": "Settings come from static rules, not measured optima or deployment guarantees."
+    },
+    {
+      "zh": "本示例没有验证 GPU、国产卡 backend 或多卡拓扑。",
+      "en": "This example does not validate GPU backends, domestic cards or multi-device topology."
+    },
+    {
+      "zh": "NVMe 字节计数不是吞吐率。",
+      "en": "NVMe byte counters are not throughput rates."
+    }
+  ],
+  "footer": {
+    "tag": "0.1.0 · Go 1.24+ · MIT"
+  }
 }

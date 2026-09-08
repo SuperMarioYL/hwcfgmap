@@ -1,0 +1,38 @@
+{
+  "mode": "auto",
+  "id": "56e675-6ae7c8-b7f6ac-b0b05bd06f4e",
+  "identity": "https://github.com/supermarioyl/hwcfgmap",
+  "primary": "#56e675",
+  "secondary": "#6ae7c8",
+  "highlight": "#b7f6ac",
+  "dark": {
+    "bg": "#050c0e",
+    "panel": "#0c1719",
+    "code": "#0a1715",
+    "ink": "#f1fdee",
+    "muted": "#95b9ae",
+    "line": "#173c25",
+    "primary": "#56e675",
+    "secondary": "#6ae7c8",
+    "highlight": "#b7f6ac",
+    "accent": "#56e675",
+    "buttonStart": "#328644",
+    "buttonEnd": "#3c8271",
+    "buttonText": "#ffffff"
+  },
+  "light": {
+    "bg": "#f9fefa",
+    "panel": "#f7fef8",
+    "code": "#f3fdf5",
+    "ink": "#132a20",
+    "muted": "#557b71",
+    "line": "#cbf7d5",
+    "primary": "#318343",
+    "secondary": "#3b7f6e",
+    "highlight": "#5c7c57",
+    "accent": "#318343",
+    "buttonStart": "#328644",
+    "buttonEnd": "#3c8271",
+    "buttonText": "#ffffff"
+  }
+}

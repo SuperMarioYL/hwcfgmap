@@ -1,0 +1,90 @@
+{
+  "name": "hwcfgmap",
+  "tagline": "Turn a hardware profile into a starting launch configuration.",
+  "architecture": {
+    "title": "Hardware and model inputs to launch arguments",
+    "nodes": [
+      {
+        "title": "Hardware probe",
+        "detail": "CPU / RAM / available GPU CLI"
+      },
+      {
+        "title": "BoxProfile",
+        "detail": "Hardware data model"
+      },
+      {
+        "title": "Model target",
+        "detail": "Defaults + YAML overrides"
+      },
+      {
+        "title": "Synthesizer",
+        "detail": "Memory and thread rules"
+      },
+      {
+        "title": "Launch text",
+        "detail": "Operator reviews and runs"
+      }
+    ],
+    "edges": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ]
+    ]
+  },
+  "process": {
+    "title": "Use a reproducible CPU-only profile",
+    "steps": [
+      {
+        "title": "Read registry",
+        "detail": "Four built-in model targets"
+      },
+      {
+        "title": "Supply fixture",
+        "detail": "8 cores, 64 GiB RAM, no GPU"
+      },
+      {
+        "title": "Synthesize",
+        "detail": "ArgMatrix + command text"
+      }
+    ],
+    "result": "The fixture produces a CPU-only starting configuration; no server or GPU is exercised."
+  },
+  "integrations": {
+    "title": "Hardware, model and output contracts",
+    "items": [
+      {
+        "title": "BoxProfile JSON",
+        "detail": "Probe output"
+      },
+      {
+        "title": "Model YAML",
+        "detail": "Weight / KV / context rules"
+      },
+      {
+        "title": "Vendor probes",
+        "detail": "Available local CLI output"
+      },
+      {
+        "title": "ArgMatrix",
+        "detail": "Structured launch settings"
+      },
+      {
+        "title": "Launch line",
+        "detail": "Printed, never executed"
+      }
+    ]
+  }
+}
