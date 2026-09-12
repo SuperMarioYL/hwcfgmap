@@ -9,7 +9,7 @@
 
 **将硬件画像与模型目标规则合成 llama-server 参数，给部署提供可检查的起点。**
 
-`v0.1.0` · `Go 1.24+` · [MIT](LICENSE)
+`v0.2.0` · `Go 1.24+` · [MIT](LICENSE)
 
 [Website](https://hwcfgmap.lei6393.com) · [Demo record](docs/demo-results.json)
 
@@ -103,6 +103,7 @@ $ go run ./examples/presentation
     "offload_layer": 0,
     "quant": "q4_k_m",
     "exec_binary": "llama-server",
+    "backend": "cpu",
     "fit_note": "CPU-only — no GPU detected; context capped by 0.8×RAM, weights run from RAM"
   },
   "launch": "llama-server --model ./example.gguf --n-gpu-layers 0 -c 8192 -b 512 -t 8 --cache-type-k q8_0 --mlock"
@@ -128,10 +129,10 @@ YAML 可设置 num_layers、quants[].weight_bytes、default_quant、kv_cache_per
 
 ## 路线图与范围
 
-当前提供画像数据模型、可用 vendor 探测、注册表和静态合成。更多国产卡的真实硬件验证、多盒同步和认证 profile 服务仍为后续方向，没有可声称已上线的付费 fleet 产品。
+当前提供画像数据模型、可用 vendor 探测、注册表和静态合成。v0.2.0 落地了国产卡 vendor CLI 的显存解析：昇腾 `npu-smi info` 表格（NPU 型号 + HBM/Memory-Usage 显存池，解析行为已用真实采集的 910B1 / 910PremiumA 输出做 fixture 验证）与摩尔线程 `mthreads-gmi -q -j` JSON（型号 + memory_total）；识别不了的输出形态一律退回"如实上报 0 显存"的存在性探测，绝不猜数字。合成输出对 CANN/MUSA 盒子带 backend 字段与构建提示。壁仞 bre-smi 仍为存在性探测（无可验证的公开输出格式）。真实硬件上的验证、多盒同步和认证 profile 服务仍为后续方向，没有可声称已上线的付费 fleet 产品。
 
 - 参数由静态模型推导，不是实测最优解或部署成功保证。
-- 本示例没有验证 GPU、国产卡 backend 或多卡拓扑。
+- 国产卡解析按采集到的 CLI 输出形态验证，尚未在实体硬件上跑通；本示例没有验证 GPU backend 或多卡拓扑。
 - NVMe 字节计数不是吞吐率。
 
 [Terminal recording](assets/demo.gif) · [Recording script](docs/demo.tape)

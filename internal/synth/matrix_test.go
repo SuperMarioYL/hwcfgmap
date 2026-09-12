@@ -1,6 +1,7 @@
 package synth
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/SuperMarioYL/hwcfgmap/internal/modeltargets"
@@ -137,5 +138,84 @@ func TestRenderLaunchLine_Flags(t *testing.T) {
 	wantNoMlock := "llama-server --model /data/models/q.gguf --n-gpu-layers 58 -c 8192 -b 512 -t 8 --cache-type-k q8_0"
 	if lineNoMlock != wantNoMlock {
 		t.Fatalf("no-mlock launch line mismatch:\nwant %q\ngot  %q", wantNoMlock, lineNoMlock)
+	}
+}
+
+// A 64 GiB Ascend 910B box fully offloads Qwen3-27B q4 and the ArgMatrix is
+// CANN-aware: the backend field is cann and the fit note carries the CANN
+// build advisory (the flags are standard, the server binary is not).
+func TestSynthesize_CANNFullOffload(t *testing.T) {
+	bp := profile.BoxProfile{
+		GPU: []profile.GPUCard{{
+			Vendor: profile.VendorHuawei, Model: "910B1",
+			VRAMBytes: 64 * gib, Backend: profile.BackendCANN, Index: 0,
+		}},
+		CPU: profile.CPUInfo{PhysicalCores: 48, Threads: 96},
+		RAM: 256 * gib,
+	}
+	am := Synthesize(bp, modeltargets.Qwen3_27B)
+
+	if am.NGPULayers != modeltargets.Qwen3_27B.NumLayers {
+		t.Fatalf("64GiB cann box: want full offload nGpu=%d, got %d", modeltargets.Qwen3_27B.NumLayers, am.NGPULayers)
+	}
+	if am.Backend != profile.BackendCANN {
+		t.Fatalf("want backend cann, got %s", am.Backend)
+	}
+	if !strings.Contains(am.FitNote, "CANN") {
+		t.Fatalf("fit note must carry the CANN build advisory, got %q", am.FitNote)
+	}
+}
+
+// A 16 GiB MTT S80 (musa) box gets a partial offload with the MUSA build
+// advisory in the fit note.
+func TestSynthesize_MUSAPartial(t *testing.T) {
+	bp := profile.BoxProfile{
+		GPU: []profile.GPUCard{{
+			Vendor: profile.VendorMooreThreads, Model: "MTT S80",
+			VRAMBytes: 16 * gib, Backend: profile.BackendMUSA, Index: 0,
+		}},
+		CPU: profile.CPUInfo{PhysicalCores: 8, Threads: 16},
+		RAM: 32 * gib,
+	}
+	am := Synthesize(bp, modeltargets.Qwen3_27B)
+
+	if am.NGPULayers == 0 || am.NGPULayers >= modeltargets.Qwen3_27B.NumLayers {
+		t.Fatalf("16GiB musa box: want partial offload, got nGpu=%d", am.NGPULayers)
+	}
+	if am.Backend != profile.BackendMUSA {
+		t.Fatalf("want backend musa, got %s", am.Backend)
+	}
+	if !strings.Contains(am.FitNote, "MUSA") {
+		t.Fatalf("fit note must carry the MUSA build advisory, got %q", am.FitNote)
+	}
+}
+
+// The backend advisory only fires for cann/musa: cuda and cpu boxes keep
+// their initial-release fit notes byte-identical, with the backend field surfaced
+// for machine consumption.
+func TestSynthesize_BackendFieldWithoutAdvisory(t *testing.T) {
+	cuda := profile.BoxProfile{
+		GPU: []profile.GPUCard{gpuCard(24 * gib)},
+		CPU: profile.CPUInfo{PhysicalCores: 8, Threads: 16},
+		RAM: 64 * gib,
+	}
+	am := Synthesize(cuda, modeltargets.Qwen3_27B)
+	if am.Backend != profile.BackendCUDA {
+		t.Fatalf("cuda box: want backend cuda, got %s", am.Backend)
+	}
+	if want := "full GPU offload — weights + KV fit in VRAM"; am.FitNote != want {
+		t.Fatalf("cuda fit note changed:\nwant %q\ngot  %q", want, am.FitNote)
+	}
+
+	cpu := profile.BoxProfile{
+		CPU: profile.CPUInfo{PhysicalCores: 8, Threads: 16},
+		RAM: 32 * gib,
+	}
+	am = Synthesize(cpu, modeltargets.Qwen3_27B)
+	if am.Backend != profile.BackendCPU {
+		t.Fatalf("cpu box: want backend cpu, got %s", am.Backend)
+	}
+	if want := "CPU-only — no GPU detected; context capped by 0.8×RAM, weights run from RAM"; am.FitNote != want {
+		t.Fatalf("cpu fit note changed:\nwant %q\ngot  %q", want, am.FitNote)
 	}
 }

@@ -10,7 +10,7 @@
   },
   "meta": {
     "visual_profile": "neon-particle",
-    "content_version": "0.1.0",
+    "content_version": "0.2.0",
     "demo_source": "docs/demo-results.json"
   },
   "hero": {
@@ -62,8 +62,8 @@
         "en": "Inspect generated settings"
       },
       "body": {
-        "zh": "ArgMatrix 暴露 offload、context、线程与 KV 类型。",
-        "en": "ArgMatrix exposes offload, context, threads and KV type."
+        "zh": "ArgMatrix 暴露 offload、context、线程、KV 类型与 backend。",
+        "en": "ArgMatrix exposes offload, context, threads, KV type and backend."
       }
     },
     {
@@ -117,8 +117,8 @@
           "en": "How it works"
         },
         "body": {
-          "zh": "probe 读取系统信息与可用的 vendor CLI；modeltargets 提供代码内默认值和 YAML 覆盖；synth.Synthesize 根据 RAM、VRAM 和物理核数生成参数，RenderLaunchLine 输出命令文本。NVMe 计数只是累计读取字节，不是带宽测量。",
-          "en": "probe reads system information and available vendor CLIs. modeltargets supplies defaults and YAML overrides; synth.Synthesize derives settings from RAM, VRAM and physical cores, and RenderLaunchLine emits command text. NVMe read counters are cumulative bytes, not measured bandwidth."
+          "zh": "probe 读取系统信息与可用的 vendor CLI——含国产卡（昇腾 npu-smi、摩尔线程 mthreads-gmi）的真实显存解析，识别不了的输出如实上报 0；modeltargets 提供代码内默认值和 YAML 覆盖；synth.Synthesize 根据 RAM、VRAM 和物理核数生成参数，RenderLaunchLine 输出命令文本。NVMe 计数只是累计读取字节，不是带宽测量。",
+          "en": "probe reads system information and available vendor CLIs — including Ascend npu-smi and Moore Threads mthreads-gmi VRAM parsing on domestic cards, with unrecognized output honestly reported as zero. modeltargets supplies defaults and YAML overrides; synth.Synthesize derives settings from RAM, VRAM and physical cores, and RenderLaunchLine emits command text. NVMe read counters are cumulative bytes, not measured bandwidth."
         },
         "image": {
           "light": "/assets/presentation/architecture-light.svg",
@@ -251,6 +251,6 @@
     }
   ],
   "footer": {
-    "tag": "0.1.0 · Go 1.24+ · MIT"
+    "tag": "0.2.0 · Go 1.24+ · MIT"
   }
 }

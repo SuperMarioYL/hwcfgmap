@@ -19,6 +19,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -26,14 +27,14 @@ import (
 	"strings"
 
 	"github.com/SuperMarioYL/hwcfgmap/internal/modeltargets"
-	"github.com/SuperMarioYL/hwcfgmap/internal/profile"
 	"github.com/SuperMarioYL/hwcfgmap/internal/probe"
+	"github.com/SuperMarioYL/hwcfgmap/internal/profile"
 	"github.com/SuperMarioYL/hwcfgmap/internal/synth"
 )
 
 // version is stamped at release time via goreleaser ldflags
 // (-ldflags "-X main.version=<v>"). Dev builds keep the -dev suffix.
-var version = "0.1.0-dev"
+var version = "0.2.0-dev"
 
 func main() {
 	if err := run(os.Args[1:], os.Stdout, os.Stderr); err != nil {
@@ -43,6 +44,17 @@ func main() {
 }
 
 func run(args []string, stdout, stderr io.Writer) error {
+	err := dispatch(args, stdout, stderr)
+	// -h/--help on a subcommand: the flag package has already printed the
+	// usage to the flagset output by the time flag.ErrHelp surfaces. Asking
+	// for help is not an error — exit 0 with no extra message.
+	if errors.Is(err, flag.ErrHelp) {
+		return nil
+	}
+	return err
+}
+
+func dispatch(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
 		return runProbe(nil, stdout, stderr)
 	}
@@ -85,13 +97,19 @@ func runProbe(args []string, stdout, stderr io.Writer) error {
 	fs := flag.NewFlagSet("probe", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	var (
-		modelID    = fs.String("model", "", "model target id (e.g. qwen3-27b); omit to probe-only")
-		ggufPath   = fs.String("gguf", "", "override the --model path baked into the launch line")
+		modelID     = fs.String("model", "", "model target id (e.g. qwen3-27b); omit to probe-only")
+		ggufPath    = fs.String("gguf", "", "override the --model path baked into the launch line")
 		profilesDir = fs.String("profiles", "./profiles", "dir of model-target YAML overrides")
-		launchOnly = fs.Bool("launch-only", false, "print only the pasteable llama-server line (for scripts)")
+		launchOnly  = fs.Bool("launch-only", false, "print only the pasteable llama-server line (for scripts)")
 	)
 	if err := fs.Parse(args); err != nil {
 		return err
+	}
+	// The flag package silently drops trailing positional arguments. Reject
+	// them so `hwcfgmap probe qwen3-27b` (missing --model) fails loudly with
+	// a did-you-mean instead of printing probe-only output.
+	if fs.NArg() > 0 {
+		return fmt.Errorf("unexpected argument %q — did you mean --model %s? (see `hwcfgmap probe -h`)", fs.Arg(0), fs.Arg(0))
 	}
 
 	fmt.Fprintln(stderr, "hwcfgmap: probing box (GPU / CPU / RAM / NVMe)...")
@@ -165,6 +183,9 @@ func runModels(args []string, stdout, stderr io.Writer) error {
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
+	if fs.NArg() > 0 {
+		return fmt.Errorf("unexpected argument %q (see `hwcfgmap models -h`)", fs.Arg(0))
+	}
 	reg := modeltargets.New()
 	if err := reg.LoadDir(*profilesDir); err != nil {
 		return fmt.Errorf("load profiles: %w", err)
@@ -183,10 +204,10 @@ func runModels(args []string, stdout, stderr io.Writer) error {
 func probeBox() (profile.BoxProfile, error) {
 	bp := profile.BoxProfile{}
 
-	gpus, _ := probe.ProbeGPU()         // empty (not error) when no vendor CLI
+	gpus, _ := probe.ProbeGPU() // empty (not error) when no vendor CLI
 	bp.GPU = gpus
 
-	cpu, _ := probe.ProbeCPU()          // always returns a value (degrades to 1 core)
+	cpu, _ := probe.ProbeCPU() // always returns a value (degrades to 1 core)
 	bp.CPU = cpu
 
 	ram, nvme, _ := probe.ProbeMemory() // nvme best-effort, may be nil

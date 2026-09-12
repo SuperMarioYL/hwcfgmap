@@ -33,8 +33,13 @@ type ArgMatrix struct {
 	// OffloadLayer mirrors NGPULayers — the index of the first layer kept on
 	// CPU (layers [0,NGPULayers) offload to GPU). Surfaced in JSON for ops.
 	OffloadLayer int    `json:"offload_layer"`
-	Quant        string `json:"quant"`        // quant the matrix was sized against
-	ExecBinary   string `json:"exec_binary"`  // server binary to invoke
+	Quant        string `json:"quant"`       // quant the matrix was sized against
+	ExecBinary   string `json:"exec_binary"` // server binary to invoke
+	// Backend is the llama.cpp compute backend the matrix assumes for the
+	// offloaded layers (cuda/rocm/cann/musa/cpu) — the backend of the box's
+	// primary card. cann/musa boxes additionally get a build advisory in
+	// FitNote, because the flags are identical but the server binary is not.
+	Backend string `json:"backend"`
 	// FitNote is a one-line human note about the fit (e.g. "full GPU offload",
 	// "partial offload — CPU bottleneck", "CPU-only, no GPU detected"). It is
 	// NOT an error — it documents what the operator is getting.
@@ -128,6 +133,19 @@ func Synthesize(bp profile.BoxProfile, mt modeltargets.ModelTarget) ArgMatrix {
 
 	mlock := mt.Mlock && ram >= weightBytes && weightBytes > 0
 
+	backend := bp.PrimaryBackend()
+	// CANN/MUSA boxes get GPU offload with the standard flags, but only a
+	// llama-server built for that backend can use it — surface the build
+	// advisory so the operator knows which binary to paste the line into.
+	if nGpu > 0 {
+		switch backend {
+		case profile.BackendCANN:
+			fitNote += " — Ascend NPU via CANN: use a llama-server built with -DGGML_CANN=ON"
+		case profile.BackendMUSA:
+			fitNote += " — Moore Threads via MUSA: use the MUSA llama.cpp build"
+		}
+	}
+
 	return ArgMatrix{
 		NGPULayers:   nGpu,
 		ContextSize:  ctx,
@@ -138,6 +156,7 @@ func Synthesize(bp profile.BoxProfile, mt modeltargets.ModelTarget) ArgMatrix {
 		OffloadLayer: nGpu,
 		Quant:        quant,
 		ExecBinary:   exec,
+		Backend:      backend,
 		FitNote:      fitNote,
 	}
 }

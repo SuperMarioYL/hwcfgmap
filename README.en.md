@@ -9,7 +9,7 @@
 
 **Combine a hardware profile with model-target rules to produce inspectable starting arguments for llama-server.**
 
-`v0.1.0` · `Go 1.24+` · [MIT](LICENSE)
+`v0.2.0` · `Go 1.24+` · [MIT](LICENSE)
 
 [Website](https://hwcfgmap.lei6393.com) · [Demo record](docs/demo-results.json)
 
@@ -103,6 +103,7 @@ $ go run ./examples/presentation
     "offload_layer": 0,
     "quant": "q4_k_m",
     "exec_binary": "llama-server",
+    "backend": "cpu",
     "fit_note": "CPU-only — no GPU detected; context capped by 0.8×RAM, weights run from RAM"
   },
   "launch": "llama-server --model ./example.gguf --n-gpu-layers 0 -c 8192 -b 512 -t 8 --cache-type-k q8_0 --mlock"
@@ -128,10 +129,10 @@ YAML fields include num_layers, quants[].weight_bytes, default_quant, kv_cache_p
 
 ## Roadmap and scope
 
-Hardware profiles, available vendor probes, the registry and static synthesis are implemented. More domestic-card validation, fleet synchronization and certified profiles remain future work; no live paid fleet product is established here.
+Hardware profiles, available vendor probes, the registry and static synthesis are implemented. v0.2.0 lands domestic-card VRAM parsing: the Ascend `npu-smi info` table (NPU model + HBM/Memory-Usage pools, parsing pinned against captured 910B1 / 910PremiumA output) and Moore Threads `mthreads-gmi -q -j` JSON (product name + memory_total). Unrecognized output shapes always degrade to the honest zero-VRAM presence probe — never a guessed number. Synthesis output carries a backend field and a build advisory on CANN/MUSA boxes. Biren bre-smi remains presence-only (no verifiable public output format). Validation on physical hardware, fleet synchronization and certified profiles remain future work; no live paid fleet product is established here.
 
 - Settings come from static rules, not measured optima or deployment guarantees.
-- This example does not validate GPU backends, domestic cards or multi-device topology.
+- Domestic-card parsing is verified against captured CLI output shapes, not on physical hardware; this example does not validate GPU backends or multi-device topology.
 - NVMe byte counters are not throughput rates.
 
 [Terminal recording](assets/demo.gif) · [Recording script](docs/demo.tape)

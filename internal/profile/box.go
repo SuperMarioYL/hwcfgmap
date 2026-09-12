@@ -5,22 +5,22 @@ package profile
 
 // Backend enumerates the llama.cpp compute backend a card maps to.
 const (
-	BackendCUDA  = "cuda"
-	BackendROCm  = "rocm"
-	BackendCANN  = "cann"  // 昇腾 / Ascend NPU
-	BackendMUSA  = "musa"  // 摩尔线程 / Moore Threads
-	BackendCPU   = "cpu"
+	BackendCUDA    = "cuda"
+	BackendROCm    = "rocm"
+	BackendCANN    = "cann" // 昇腾 / Ascend NPU
+	BackendMUSA    = "musa" // 摩尔线程 / Moore Threads
+	BackendCPU     = "cpu"
 	BackendUnknown = "unknown"
 )
 
 // Vendor enumerates GPU vendors we can detect from the box's vendor CLIs.
 const (
-	VendorNVIDIA      = "nvidia"
-	VendorAMD         = "amd"
-	VendorHuawei      = "huawei"       // 昇腾
+	VendorNVIDIA       = "nvidia"
+	VendorAMD          = "amd"
+	VendorHuawei       = "huawei"       // 昇腾
 	VendorMooreThreads = "moorethreads" // 摩尔线程
-	VendorBiren       = "biren"        // 壁仞
-	VendorUnknown     = "unknown"
+	VendorBiren        = "biren"        // 壁仞
+	VendorUnknown      = "unknown"
 )
 
 // GPUCard describes one compute card seen on the box.
@@ -85,6 +85,27 @@ func (b BoxProfile) TotalVRAM() uint64 {
 		sum += g.VRAMBytes
 	}
 	return sum
+}
+
+// PrimaryBackend returns the llama.cpp backend of the card with the largest
+// reported VRAM (first card on ties), or BackendCPU when no card was detected.
+// It is the backend the synthesizer assumes for the offloaded layers — a
+// detected-but-unparsed card (VRAMBytes 0) still reports its backend so the
+// output stays honest about what was seen.
+func (b BoxProfile) PrimaryBackend() string {
+	if len(b.GPU) == 0 {
+		return BackendCPU
+	}
+	best := b.GPU[0]
+	for _, g := range b.GPU[1:] {
+		if g.VRAMBytes > best.VRAMBytes {
+			best = g
+		}
+	}
+	if best.Backend == "" {
+		return BackendUnknown
+	}
+	return best.Backend
 }
 
 // HasGPU reports whether any compute card was detected.
